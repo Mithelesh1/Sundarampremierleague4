@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cricket Registration Form</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111 url("https://images.pexels.com/photos/269948/pexels-photo-269948.jpeg?auto=compress&cs=tinysrgb&w=800") center/cover no-repeat;
+      color: #fff;
+    }
+    .overlay {
+      background: rgba(0,0,0,0.7);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .form-container {
+      max-width: 480px;
+      margin: 0 auto;
+      background: rgba(0,0,0,0.75);
+      padding: 20px 18px 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+    }
+    h1 {
+      text-align: center;
+      margin-top: 0;
+      font-size: 26px;
+    }
+    label {
+      display: block;
+      margin: 10px 0 4px;
+      font-size: 14px;
+    }
+    .roles label {
+      display: inline-block;
+      margin-right: 8px;
+      font-size: 14px;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 4px;
+      border: none;
+      margin-bottom: 8px;
+      box-sizing: border-box;
+    }
+    .terms {
+      margin: 12px 0;
+      font-size: 13px;
+    }
+    .btn-pay {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #f7b733;
+      color: #000;
+    }
+    .btn-pay:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <div class="form-container">
+      <h1>SUNDARAM PREMIER LEAGUE 4<br>Cricket Registration</h1>
+
+      <div class="roles">
+        <label><input type="checkbox"> Bowler</label>
+        <label><input type="checkbox"> Batsman</label>
+        <label><input type="checkbox"> Wicket Keeper</label>
+        <label><input type="checkbox"> All Rounder</label>
+      </div>
+
+      <label>Trial Location</label>
+      <select id="trialLocation">
+        <option value="">Select Location</option>
+        <option>Delhi</option>
+        <option>Mumbai</option>
+        <option>Chennai</option>
+        <option>Kolkata</option>
+        <option>Other</option>
+      </select>
+
+      <label>Full Name</label>
+      <input type="text" id="fullName" placeholder="Full Name">
+
+      <label>Age (10–35 yrs)</label>
+      <input type="text" id="age" placeholder="Age">
+
+      <label>Mobile Number</label>
+      <input type="text" id="mobile" placeholder="Mobile number">
+
+      <label>Email</label>
+      <input type="email" id="email" placeholder="Email">
+
+      <label>T-shirt Size</label>
+      <select id="tshirt">
+        <option value="">Select T-shirt size</option>
+        <option>S</option>
+        <option>M</option>
+        <option>L</option>
+        <option>XL</option>
+        <option>XXL</option>
+      </select>
+
+      <label>State</label>
+      <select id="state">
+        <option value="">Select Any State</option>
+        <option>Delhi</option>
+        <option>Maharashtra</option>
+        <option>Tamil Nadu</option>
+        <option>Uttar Pradesh</option>
+        <option>Other</option>
+      </select>
+
+      <label>City</label>
+      <input type="text" id="city" placeholder="City">
+
+      <div class="terms">
+        <label>
+          <input type="checkbox" id="terms">
+          I agree by the <span style="color:#ff5555;">Terms &amp; Conditions</span>
+        </label>
+      </div>
+
+      <!-- ONLY PAY NOW BUTTON -->
+      <button class="btn-pay" type="button" onclick="payNow()">
+        ₹ 750 – Pay Now
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function payNow() {
+      if (!document.getElementById('terms').checked) {
+        alert("Please agree to the Terms & Conditions.");
+        return;
+      }
+
+      if (!document.getElementById('fullName').value ||
+          !document.getElementById('mobile').value) {
+        alert("Please enter Name and Mobile number.");
+        return;
+      }
+
+      // Final UPI Payment Link (your UPI)
+      const paymentUrl = "upi://pay?pa=9370557663@yespop&pn=SPL4%20Cricket&am=750&cu=INR&tn=SPL4%20Registration";
+
+      // Redirect to UPI payment
+      window.location.href = paymentUrl;
+    }
+  </script>
+</body>
+</html>
