@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Cricket Registration Form</title>
+  <title>SPL4 Cricket Registration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
@@ -19,9 +19,9 @@
     .form-container {
       max-width: 480px;
       margin: 0 auto;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.85);
       padding: 20px 18px 30px;
-      border-radius: 8px;
+      border-radius: 10px;
       box-shadow: 0 0 20px rgba(255,215,0,0.3);
       text-align: center;
     }
@@ -37,8 +37,8 @@
       text-shadow: 0 0 5px #000;
     }
     h2 {
-      margin: 4px 0 16px;
-      font-size: 16px;
+      margin: 4px 0 18px;
+      font-size: 15px;
     }
     label {
       display: block;
@@ -46,13 +46,20 @@
       margin: 10px 0 4px;
       font-size: 14px;
     }
-    input[type="text"] {
+    input[type="text"],
+    input[type="file"] {
       width: 100%;
       padding: 8px 10px;
       border-radius: 4px;
       border: none;
       margin-bottom: 8px;
       box-sizing: border-box;
+      background: #fff;
+      color: #000;
+      font-size: 14px;
+    }
+    input[type="file"] {
+      padding: 6px 4px;
     }
     .terms {
       margin: 12px 0;
@@ -93,11 +100,25 @@
       text-align: left;
     }
     #hint {
-      margin-top: 8px;
-      font-size: 12px;
+      margin-top: 6px;
+      font-size: 11px;
       color: #ddd;
       text-align: left;
       display: none;
+    }
+    #imagePreviewWrapper {
+      margin-top: 4px;
+      text-align: left;
+      font-size: 12px;
+      color: #ccc;
+    }
+    #preview {
+      display: none;
+      margin-top: 6px;
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.4);
     }
   </style>
 </head>
@@ -108,7 +129,7 @@
       <img src="logo.png" alt="SPL4 Logo" class="logo" onerror="this.style.display='none'">
 
       <h1>SUNDARAM PREMIER LEAGUE 4</h1>
-      <h2>Online Registration</h2>
+      <h2>Online Registration Form</h2>
 
       <label>Full Name</label>
       <input type="text" id="fullName" placeholder="Full Name" />
@@ -119,80 +140,85 @@
       <label>Mobile Number</label>
       <input type="text" id="mobile" placeholder="Mobile number" />
 
+      <!-- Upload Image + Preview -->
+      <label>Upload Image (optional)</label>
+      <input type="file" id="photo" accept="image/*" onchange="previewImage(event)" />
+      <div id="imagePreviewWrapper">
+        <span style="font-size:11px;">Selected image preview (only visible to you):</span>
+        <img id="preview" src="" alt="Image preview" />
+      </div>
+
       <div class="terms">
         <label>
-          <input type="checkbox" id="terms" /> I agree to the <span style="color:#ff5555;">Terms &amp; Conditions</span>
+          <input type="checkbox" id="terms" />
+          I agree to the <span style="color:#ff5555;">Terms &amp; Conditions</span>
         </label>
       </div>
 
       <!-- PAY BUTTON -->
-      <button class="btn-pay" type="button" id="payNowBtn">₹ 1 – Pay Now</button>
+      <button class="btn-pay" type="button" id="payNowBtn">
+        ₹ 1 – Pay Now
+      </button>
 
       <!-- WHATSAPP BUTTON (hidden initially) -->
-      <a id="waButton" class="btn-wa" href="#" target="_blank" style="display:none;">Send Details on WhatsApp</a>
+      <a id="waButton" class="btn-wa" href="#" target="_blank" style="display:none;">
+        Send Details on WhatsApp
+      </a>
 
       <!-- PAYMENT SUCCESS MESSAGE -->
       <div id="successMessage">
         ✅ Payment window opened. After completing UPI payment, tap the green WhatsApp button
         to send your registration details to the organiser.
       </div>
-
       <div id="hint">
-        Tip: If WhatsApp doesn't open automatically, copy the details and send them manually.
+        Tip: You can also attach the same photo directly in WhatsApp while sending your details.
       </div>
     </div>
   </div>
 
   <script>
-    const UPI_LINK = "upi://pay?pa=9370557663@yespop&pn=SPL4%20Cricket&am=1&cu=INR&tn=SPL4%20Registration";
-    const WA_NUMBER = "919370557663"; // organiser number with country code
+    // Your UPI and WhatsApp settings
+    const UPI_LINK =
+      "upi://pay?pa=9370557663@yespop&pn=SPL4%20Cricket&am=1&cu=INR&tn=SPL4%20Registration";
+    const WA_NUMBER = "919370557663"; // organiser with country code
 
-    // utility: save pending registration to localStorage
-    function savePending(data) {
-      localStorage.setItem("spl4_pending", JSON.stringify(data));
-    }
-    function clearPending() {
-      localStorage.removeItem("spl4_pending");
-    }
-    function getPending() {
-      const s = localStorage.getItem("spl4_pending");
-      return s ? JSON.parse(s) : null;
+    function previewImage(event) {
+      const file = event.target.files[0];
+      const preview = document.getElementById("preview");
+
+      if (!file) {
+        preview.style.display = "none";
+        preview.src = "";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
     }
 
-    // build whatsapp url from data
-    function buildWhatsAppUrl(data) {
+    function buildWhatsAppUrl(name, age, mobile) {
       const text =
         "New SPL4 Registration%0A%0A" +
-        "Name: " + encodeURIComponent(data.name) + "%0A" +
-        "Age: " + encodeURIComponent(data.age) + "%0A" +
-        "Mobile: " + encodeURIComponent(data.mobile) + "%0A%0A" +
-        "Player has paid ₹1 via UPI.";
+        "Name: " +
+        encodeURIComponent(name) +
+        "%0A" +
+        "Age: " +
+        encodeURIComponent(age) +
+        "%0A" +
+        "Mobile: " +
+        encodeURIComponent(mobile) +
+        "%0A%0A" +
+        "Player has paid ₹1 via UPI (or will pay now).%0A" +
+        "Please note: Player selected an image in the form, but it is not auto-uploaded. They can attach it here in WhatsApp.";
+
       return "https://wa.me/" + WA_NUMBER + "?text=" + text;
     }
 
-    // Show WA button & success message if pending exists
-    function showPendingUI(data) {
-      const waBtn = document.getElementById("waButton");
-      const success = document.getElementById("successMessage");
-      const hint = document.getElementById("hint");
-
-      waBtn.href = buildWhatsAppUrl(data);
-      waBtn.style.display = "inline-block";
-      success.style.display = "block";
-      hint.style.display = "block";
-    }
-
-    // On page load: check pending
-    window.addEventListener("load", function() {
-      const pending = getPending();
-      if (pending && pending.status === "waiting_for_whatsapp") {
-        // show WA button so user can send details
-        showPendingUI(pending);
-      }
-    });
-
-    // Pay Now click handler
-    document.getElementById("payNowBtn").addEventListener("click", function() {
+    document.getElementById("payNowBtn").addEventListener("click", function () {
       const name = document.getElementById("fullName").value.trim();
       const age = document.getElementById("age").value.trim();
       const mobile = document.getElementById("mobile").value.trim();
@@ -207,38 +233,18 @@
         return;
       }
 
-      // Save pending data BEFORE redirecting to UPI
-      const pendingData = {
-        name: name,
-        age: age,
-        mobile: mobile,
-        status: "waiting_for_whatsapp",
-        timestamp: Date.now()
-      };
-      savePending(pendingData);
+      // Prepare WhatsApp button
+      const waUrl = buildWhatsAppUrl(name, age, mobile);
+      const waBtn = document.getElementById("waButton");
+      waBtn.href = waUrl;
+      waBtn.style.display = "inline-block";
 
-      // Try to open UPI link
-      // Some browsers block immediate redirect; using location.href is fine for UPI deep link
+      // Show success message + hint
+      document.getElementById("successMessage").style.display = "block";
+      document.getElementById("hint").style.display = "block";
+
+      // Open UPI payment
       window.location.href = UPI_LINK;
-
-      // As fallback, after a short timeout show WA button (in case browser blocks redirect)
-      setTimeout(function() {
-        const p = getPending();
-        if (p && p.status === "waiting_for_whatsapp") {
-          showPendingUI(p);
-        }
-      }, 1200);
-    });
-
-    // When user clicks WA button, clear localStorage so it won't reappear repeatedly
-    document.getElementById("waButton").addEventListener("click", function() {
-      // give small delay to ensure wa opens, then clear pending
-      setTimeout(function() {
-        clearPending();
-        document.getElementById("successMessage").style.display = "none";
-        document.getElementById("waButton").style.display = "none";
-        document.getElementById("hint").style.display = "none";
-      }, 1500);
     });
   </script>
 </body>
