@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Cricket Registration Form</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       margin: 0;
@@ -90,59 +90,113 @@
       font-size: 13px;
       color: #90ee90;
       display: none;
+      text-align: left;
+    }
+    #hint {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #ddd;
+      text-align: left;
+      display: none;
     }
   </style>
 </head>
 <body>
   <div class="overlay">
     <div class="form-container">
-
-      <!-- LOGO: file name logo.png in same folder -->
-      <img src="logo.png" alt="SPL4 Logo" class="logo">
+      <!-- Make sure logo.png exists in same folder -->
+      <img src="logo.png" alt="SPL4 Logo" class="logo" onerror="this.style.display='none'">
 
       <h1>SUNDARAM PREMIER LEAGUE 4</h1>
       <h2>Online Registration</h2>
 
       <label>Full Name</label>
-      <input type="text" id="fullName" placeholder="Full Name">
+      <input type="text" id="fullName" placeholder="Full Name" />
 
       <label>Age (10–35 yrs)</label>
-      <input type="text" id="age" placeholder="Age">
+      <input type="text" id="age" placeholder="Age" />
 
       <label>Mobile Number</label>
-      <input type="text" id="mobile" placeholder="Mobile number">
+      <input type="text" id="mobile" placeholder="Mobile number" />
 
       <div class="terms">
         <label>
-          <input type="checkbox" id="terms">
-          I agree to the <span style="color:#ff5555;">Terms &amp; Conditions</span>
+          <input type="checkbox" id="terms" /> I agree to the <span style="color:#ff5555;">Terms &amp; Conditions</span>
         </label>
       </div>
 
       <!-- PAY BUTTON -->
-      <button class="btn-pay" type="button" onclick="payNow()">
-        ₹ 1 – Pay Now
-      </button>
+      <button class="btn-pay" type="button" id="payNowBtn">₹ 1 – Pay Now</button>
 
-      <!-- WHATSAPP BUTTON (PEHLE HIDE, BAAD ME DIKHEGA) -->
-      <a id="waButton" class="btn-wa" href="#" target="_blank" style="display:none;">
-        Send Details on WhatsApp
-      </a>
+      <!-- WHATSAPP BUTTON (hidden initially) -->
+      <a id="waButton" class="btn-wa" href="#" target="_blank" style="display:none;">Send Details on WhatsApp</a>
 
       <!-- PAYMENT SUCCESS MESSAGE -->
       <div id="successMessage">
         ✅ Payment window opened. After completing UPI payment, tap the green WhatsApp button
         to send your registration details to the organiser.
       </div>
+
+      <div id="hint">
+        Tip: If WhatsApp doesn't open automatically, copy the details and send them manually.
+      </div>
     </div>
   </div>
 
   <script>
-    function payNow() {
-      const name   = document.getElementById('fullName').value.trim();
-      const age    = document.getElementById('age').value.trim();
-      const mobile = document.getElementById('mobile').value.trim();
-      const terms  = document.getElementById('terms').checked;
+    const UPI_LINK = "upi://pay?pa=9370557663@yespop&pn=SPL4%20Cricket&am=1&cu=INR&tn=SPL4%20Registration";
+    const WA_NUMBER = "919370557663"; // organiser number with country code
+
+    // utility: save pending registration to localStorage
+    function savePending(data) {
+      localStorage.setItem("spl4_pending", JSON.stringify(data));
+    }
+    function clearPending() {
+      localStorage.removeItem("spl4_pending");
+    }
+    function getPending() {
+      const s = localStorage.getItem("spl4_pending");
+      return s ? JSON.parse(s) : null;
+    }
+
+    // build whatsapp url from data
+    function buildWhatsAppUrl(data) {
+      const text =
+        "New SPL4 Registration%0A%0A" +
+        "Name: " + encodeURIComponent(data.name) + "%0A" +
+        "Age: " + encodeURIComponent(data.age) + "%0A" +
+        "Mobile: " + encodeURIComponent(data.mobile) + "%0A%0A" +
+        "Player has paid ₹1 via UPI.";
+      return "https://wa.me/" + WA_NUMBER + "?text=" + text;
+    }
+
+    // Show WA button & success message if pending exists
+    function showPendingUI(data) {
+      const waBtn = document.getElementById("waButton");
+      const success = document.getElementById("successMessage");
+      const hint = document.getElementById("hint");
+
+      waBtn.href = buildWhatsAppUrl(data);
+      waBtn.style.display = "inline-block";
+      success.style.display = "block";
+      hint.style.display = "block";
+    }
+
+    // On page load: check pending
+    window.addEventListener("load", function() {
+      const pending = getPending();
+      if (pending && pending.status === "waiting_for_whatsapp") {
+        // show WA button so user can send details
+        showPendingUI(pending);
+      }
+    });
+
+    // Pay Now click handler
+    document.getElementById("payNowBtn").addEventListener("click", function() {
+      const name = document.getElementById("fullName").value.trim();
+      const age = document.getElementById("age").value.trim();
+      const mobile = document.getElementById("mobile").value.trim();
+      const terms = document.getElementById("terms").checked;
 
       if (!terms) {
         alert("Please agree to the Terms & Conditions.");
@@ -153,29 +207,39 @@
         return;
       }
 
-      // 1️⃣ Prepare WhatsApp link (but sirf button ke liye set karenge)
-      const waNumber = "919370557663"; // with country code
-      const waText =
-        "New SPL4 Registration%0A%0A" +
-        "Name: "   + encodeURIComponent(name)   + "%0A" +
-        "Age: "    + encodeURIComponent(age)    + "%0A" +
-        "Mobile: " + encodeURIComponent(mobile) + "%0A%0A" +
-        "Player has paid ₹1 via UPI.";
+      // Save pending data BEFORE redirecting to UPI
+      const pendingData = {
+        name: name,
+        age: age,
+        mobile: mobile,
+        status: "waiting_for_whatsapp",
+        timestamp: Date.now()
+      };
+      savePending(pendingData);
 
-      const whatsappUrl = "https://wa.me/" + waNumber + "?text=" + waText;
+      // Try to open UPI link
+      // Some browsers block immediate redirect; using location.href is fine for UPI deep link
+      window.location.href = UPI_LINK;
 
-      // WhatsApp button ko enable + show karo
-      const waBtn = document.getElementById("waButton");
-      waBtn.href = whatsappUrl;
-      waBtn.style.display = "inline-block";
+      // As fallback, after a short timeout show WA button (in case browser blocks redirect)
+      setTimeout(function() {
+        const p = getPending();
+        if (p && p.status === "waiting_for_whatsapp") {
+          showPendingUI(p);
+        }
+      }, 1200);
+    });
 
-      // Success message dikhao
-      document.getElementById("successMessage").style.display = "block";
-
-      // 2️⃣ Ab UPI payment open karo (sirf ye direct khulega)
-      const paymentUrl = "upi://pay?pa=9370557663@yespop&pn=SPL4%20Cricket&am=1&cu=INR&tn=SPL4%20Registration";
-      window.location.href = paymentUrl;
-    }
+    // When user clicks WA button, clear localStorage so it won't reappear repeatedly
+    document.getElementById("waButton").addEventListener("click", function() {
+      // give small delay to ensure wa opens, then clear pending
+      setTimeout(function() {
+        clearPending();
+        document.getElementById("successMessage").style.display = "none";
+        document.getElementById("waButton").style.display = "none";
+        document.getElementById("hint").style.display = "none";
+      }, 1500);
+    });
   </script>
 </body>
 </html>
