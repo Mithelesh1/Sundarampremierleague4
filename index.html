@@ -8,29 +8,41 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #111 url("https://images.pexels.com/photos/269948/pexels-photo-269948.jpeg?auto=compress&cs=tinysrgb&w=800") center/cover no-repeat;
+      background: #111 url("https://images.pexels.com/photos/724319/pexels-photo-724319.jpeg?auto=compress&cs=tinysrgb&w=800") center/cover no-repeat;
       color: #fff;
     }
     .overlay {
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.8);
       min-height: 100vh;
       padding: 20px;
     }
     .form-container {
       max-width: 480px;
       margin: 0 auto;
-      background: rgba(0,0,0,0.75);
+      background: rgba(0,0,0,0.8);
       padding: 20px 18px 30px;
       border-radius: 8px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+      box-shadow: 0 0 20px rgba(255,215,0,0.3);
+      text-align: center;
+    }
+    .logo {
+      max-width: 120px;
+      margin: 0 auto 10px;
+      display: block;
     }
     h1 {
-      text-align: center;
       margin-top: 0;
-      font-size: 26px;
+      font-size: 22px;
+      color: #ffd700; /* Gold */
+      text-shadow: 0 0 5px #000;
+    }
+    h2 {
+      margin: 4px 0 16px;
+      font-size: 16px;
     }
     label {
       display: block;
+      text-align: left;
       margin: 10px 0 4px;
       font-size: 14px;
     }
@@ -45,6 +57,7 @@
     .terms {
       margin: 12px 0;
       font-size: 13px;
+      text-align: left;
     }
     .btn-pay {
       width: 100%;
@@ -54,18 +67,30 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      background: #f7b733;
+      background: #ffd700; /* Gold button */
       color: #000;
+      margin-top: 8px;
     }
     .btn-pay:active {
       transform: scale(0.98);
+    }
+    #successMessage {
+      margin-top: 14px;
+      font-size: 13px;
+      color: #90ee90;
+      display: none;
     }
   </style>
 </head>
 <body>
   <div class="overlay">
     <div class="form-container">
-      <h1>SUNDARAM PREMIER LEAGUE 4<br>Registration Form</h1>
+
+      <!-- LOGO (upload logo.png in same folder) -->
+      <img src="logo.png" alt="SPL4 Logo" class="logo">
+
+      <h1>SUNDARAM PREMIER LEAGUE 4</h1>
+      <h2>Online Registration</h2>
 
       <label>Full Name</label>
       <input type="text" id="fullName" placeholder="Full Name">
@@ -79,33 +104,56 @@
       <div class="terms">
         <label>
           <input type="checkbox" id="terms">
-          I agree by the <span style="color:#ff5555;">Terms &amp; Conditions</span>
+          I agree to the <span style="color:#ff5555;">Terms &amp; Conditions</span>
         </label>
       </div>
 
-      <!-- ONLY PAY NOW BUTTON -->
       <button class="btn-pay" type="button" onclick="payNow()">
         ₹ 1 – Pay Now
       </button>
+
+      <!-- PAYMENT SUCCESS MESSAGE -->
+      <div id="successMessage">
+        ✅ If you have completed the UPI payment, your registration request has been submitted.
+        Our team will contact you on WhatsApp / Phone.
+      </div>
     </div>
   </div>
 
   <script>
     function payNow() {
-      if (!document.getElementById('terms').checked) {
+      const name   = document.getElementById('fullName').value.trim();
+      const age    = document.getElementById('age').value.trim();
+      const mobile = document.getElementById('mobile').value.trim();
+      const terms  = document.getElementById('terms').checked;
+
+      if (!terms) {
         alert("Please agree to the Terms & Conditions.");
         return;
       }
-
-      if (!document.getElementById('fullName').value ||
-          !document.getElementById('mobile').value) {
+      if (!name || !mobile) {
         alert("Please enter Name and Mobile number.");
         return;
       }
 
-      // Your UPI Payment Link (₹1)
-      const paymentUrl = "upi://pay?pa=9370557663@yespop&pn=SPL4%20Cricket&am=1&cu=INR&tn=SPL4%20Registration";
+      // 1️⃣ WhatsApp auto-message (to organiser)
+      const waNumber = "919370557663"; // with country code 91
+      const waText =
+        "New SPL4 Registration%0A%0A" +
+        "Name: " + encodeURIComponent(name) + "%0A" +
+        "Age: " + encodeURIComponent(age) + "%0A" +
+        "Mobile: " + encodeURIComponent(mobile) + "%0A%0A" +
+        "Player is proceeding to pay ₹1 via UPI.";
 
+      const whatsappUrl = "https://wa.me/" + waNumber + "?text=" + waText;
+      // open WhatsApp in new tab
+      window.open(whatsappUrl, "_blank");
+
+      // 2️⃣ Show success text on page
+      document.getElementById("successMessage").style.display = "block";
+
+      // 3️⃣ Open UPI payment (₹1)
+      const paymentUrl = "upi://pay?pa=9370557663@yespop&pn=SPL4%20Cricket&am=1&cu=INR&tn=SPL4%20Registration";
       window.location.href = paymentUrl;
     }
   </script>
