@@ -34,15 +34,7 @@
       margin: 10px 0 4px;
       font-size: 14px;
     }
-    .roles label {
-      display: inline-block;
-      margin-right: 8px;
-      font-size: 14px;
-    }
-    input[type="text"],
-    input[type="email"],
-    input[type="date"],
-    select {
+    input[type="text"] {
       width: 100%;
       padding: 8px 10px;
       border-radius: 4px;
@@ -73,24 +65,7 @@
 <body>
   <div class="overlay">
     <div class="form-container">
-      <h1>SUNDARAM PREMIER LEAGUE 4<br>Cricket Registration</h1>
-
-      <div class="roles">
-        <label><input type="checkbox"> Bowler</label>
-        <label><input type="checkbox"> Batsman</label>
-        <label><input type="checkbox"> Wicket Keeper</label>
-        <label><input type="checkbox"> All Rounder</label>
-      </div>
-
-      <label>Trial Location</label>
-      <select id="trialLocation">
-        <option value="">Select Location</option>
-        <option>Delhi</option>
-        <option>Mumbai</option>
-        <option>Chennai</option>
-        <option>Kolkata</option>
-        <option>Other</option>
-      </select>
+      <h1>SUNDARAM PREMIER LEAGUE 4<br>Registration Form</h1>
 
       <label>Full Name</label>
       <input type="text" id="fullName" placeholder="Full Name">
@@ -101,32 +76,6 @@
       <label>Mobile Number</label>
       <input type="text" id="mobile" placeholder="Mobile number">
 
-      <label>Email</label>
-      <input type="email" id="email" placeholder="Email">
-
-      <label>T-shirt Size</label>
-      <select id="tshirt">
-        <option value="">Select T-shirt size</option>
-        <option>S</option>
-        <option>M</option>
-        <option>L</option>
-        <option>XL</option>
-        <option>XXL</option>
-      </select>
-
-      <label>State</label>
-      <select id="state">
-        <option value="">Select Any State</option>
-        <option>Delhi</option>
-        <option>Maharashtra</option>
-        <option>Tamil Nadu</option>
-        <option>Uttar Pradesh</option>
-        <option>Other</option>
-      </select>
-
-      <label>City</label>
-      <input type="text" id="city" placeholder="City">
-
       <div class="terms">
         <label>
           <input type="checkbox" id="terms">
@@ -136,7 +85,7 @@
 
       <!-- ONLY PAY NOW BUTTON -->
       <button class="btn-pay" type="button" onclick="payNow()">
-        ₹ 750 – Pay Now
+        ₹ 1 – Pay Now
       </button>
     </div>
   </div>
@@ -154,10 +103,9 @@
         return;
       }
 
-      // Final UPI Payment Link (your UPI)
-      const paymentUrl = "upi://pay?pa=9370557663@yespop&pn=SPL4%20Cricket&am=750&cu=INR&tn=SPL4%20Registration";
+      // Your UPI Payment Link (₹1)
+      const paymentUrl = "upi://pay?pa=9370557663@yespop&pn=SPL4%20Cricket&am=1&cu=INR&tn=SPL4%20Registration";
 
-      // Redirect to UPI payment
       window.location.href = paymentUrl;
     }
   </script>
