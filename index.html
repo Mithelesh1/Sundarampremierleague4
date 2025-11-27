@@ -33,7 +33,7 @@
     h1 {
       margin-top: 0;
       font-size: 22px;
-      color: #ffd700; /* Gold */
+      color: #ffd700;
       text-shadow: 0 0 5px #000;
     }
     h2 {
@@ -59,7 +59,8 @@
       font-size: 13px;
       text-align: left;
     }
-    .btn-pay {
+    .btn-pay,
+    .btn-wa {
       width: 100%;
       padding: 12px;
       border: none;
@@ -67,11 +68,21 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      background: #ffd700; /* Gold button */
-      color: #000;
       margin-top: 8px;
+      display: inline-block;
+      text-decoration: none;
+      text-align: center;
     }
-    .btn-pay:active {
+    .btn-pay {
+      background: #ffd700;
+      color: #000;
+    }
+    .btn-wa {
+      background: #25D366; /* WhatsApp green */
+      color: #fff;
+    }
+    .btn-pay:active,
+    .btn-wa:active {
       transform: scale(0.98);
     }
     #successMessage {
@@ -86,7 +97,7 @@
   <div class="overlay">
     <div class="form-container">
 
-      <!-- LOGO (upload logo.png in same folder) -->
+      <!-- LOGO: file name logo.png in same folder -->
       <img src="logo.png" alt="SPL4 Logo" class="logo">
 
       <h1>SUNDARAM PREMIER LEAGUE 4</h1>
@@ -108,14 +119,20 @@
         </label>
       </div>
 
+      <!-- PAY BUTTON -->
       <button class="btn-pay" type="button" onclick="payNow()">
         ₹ 1 – Pay Now
       </button>
 
+      <!-- WHATSAPP BUTTON (PEHLE HIDE, BAAD ME DIKHEGA) -->
+      <a id="waButton" class="btn-wa" href="#" target="_blank" style="display:none;">
+        Send Details on WhatsApp
+      </a>
+
       <!-- PAYMENT SUCCESS MESSAGE -->
       <div id="successMessage">
-        ✅ If you have completed the UPI payment, your registration request has been submitted.
-        Our team will contact you on WhatsApp / Phone.
+        ✅ Payment window opened. After completing UPI payment, tap the green WhatsApp button
+        to send your registration details to the organiser.
       </div>
     </div>
   </div>
@@ -136,23 +153,26 @@
         return;
       }
 
-      // 1️⃣ WhatsApp auto-message (to organiser)
-      const waNumber = "919370557663"; // with country code 91
+      // 1️⃣ Prepare WhatsApp link (but sirf button ke liye set karenge)
+      const waNumber = "919370557663"; // with country code
       const waText =
         "New SPL4 Registration%0A%0A" +
-        "Name: " + encodeURIComponent(name) + "%0A" +
-        "Age: " + encodeURIComponent(age) + "%0A" +
+        "Name: "   + encodeURIComponent(name)   + "%0A" +
+        "Age: "    + encodeURIComponent(age)    + "%0A" +
         "Mobile: " + encodeURIComponent(mobile) + "%0A%0A" +
-        "Player is proceeding to pay ₹1 via UPI.";
+        "Player has paid ₹1 via UPI.";
 
       const whatsappUrl = "https://wa.me/" + waNumber + "?text=" + waText;
-      // open WhatsApp in new tab
-      window.open(whatsappUrl, "_blank");
 
-      // 2️⃣ Show success text on page
+      // WhatsApp button ko enable + show karo
+      const waBtn = document.getElementById("waButton");
+      waBtn.href = whatsappUrl;
+      waBtn.style.display = "inline-block";
+
+      // Success message dikhao
       document.getElementById("successMessage").style.display = "block";
 
-      // 3️⃣ Open UPI payment (₹1)
+      // 2️⃣ Ab UPI payment open karo (sirf ye direct khulega)
       const paymentUrl = "upi://pay?pa=9370557663@yespop&pn=SPL4%20Cricket&am=1&cu=INR&tn=SPL4%20Registration";
       window.location.href = paymentUrl;
     }
