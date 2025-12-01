@@ -2,129 +2,53 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>SPL4 Cricket Registration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cricket Tournament Registration</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111 url("https://images.pexels.com/photos/724319/pexels-photo-724319.jpeg?auto=compress&cs=tinysrgb&w=800") center/cover no-repeat;
-      color: #fff;
-    }
-    .overlay {
-      background: rgba(0,0,0,0.8);
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .form-container {
-      max-width: 480px;
-      margin: 0 auto;
-      background: rgba(0,0,0,0.85);
-      padding: 20px 18px 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(255,215,0,0.3);
-      text-align: center;
-    }
-    .logo {
-      max-width: 120px;
-      margin: 0 auto 10px;
-      display: block;
-    }
-    h1 {
-      margin-top: 0;
-      font-size: 22px;
-      color: #ffd700;
-      text-shadow: 0 0 5px #000;
-    }
-    h2 {
-      margin: 4px 0 18px;
-      font-size: 15px;
-    }
-    label {
-      display: block;
-      text-align: left;
-      margin: 10px 0 4px;
-      font-size: 14px;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 4px;
-      border: none;
-      margin-bottom: 8px;
-      box-sizing: border-box;
-      background: #fff;
-      color: #000;
-      font-size: 14px;
-    }
-    .terms {
-      margin: 12px 0;
-      font-size: 13px;
-      text-align: left;
-    }
-    .btn-pay {
-      width: 100%;
-      padding: 12px;
-      border-radius: 4px;
-      border: none;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 8px;
-      display: inline-block;
-      text-decoration: none;
-      text-align: center;
-      background: #ffd700;
-      color: #000;
-    }
-    .btn-pay:active {
-      transform: scale(0.98);
-    }
-    .note {
-      margin-top: 12px;
-      font-size: 11px;
-      text-align: left;
-      color: #ddd;
-    }
+    body { font-family: Arial, sans-serif; background:#f2f2f2; padding:20px; }
+    .container { max-width:600px; margin:auto; background:#fff; padding:20px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+    input, select { width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:6px; }
+    button { width:100%; padding:12px; border:none; border-radius:6px; background:#1e88e5; color:white; font-size:16px; cursor:pointer; }
+    button:hover { background:#0d47a1; }
+    .upi-box { background:#fafafa; padding:12px; border-radius:8px; margin-top:15px; border:1px solid #ddd; }
   </style>
 </head>
 <body>
-  <div class="overlay">
-    <div class="form-container">
-      <!-- Optional logo -->
-      <img src="logo.png" alt="SPL4 Logo" class="logo" onerror="this.style.display='none'">
+  <div class="container">
+    <h2>Cricket Registration Form</h2>
 
-      <h1>SUNDARAM PREMIER LEAGUE 4</h1>
-      <h2>Online Registration</h2>
-
+    <form id="regForm">
       <label>Full Name</label>
-      <input type="text" id="fullName" placeholder="Full Name" />
-
-      <label>Age (10–35 yrs)</label>
-      <input type="text" id="age" placeholder="Age" />
+      <input type="text" required />
 
       <label>Mobile Number</label>
-      <input type="text" id="mobile" placeholder="Mobile number" />
+      <input type="tel" required />
 
-      <div class="terms">
-        <label>
-          <input type="checkbox" id="terms" />
-          I agree to the <span style="color:#ff5555;">Terms &amp; Conditions</span>
-        </label>
+      <label>Team Name (optional)</label>
+      <input type="text" />
+
+      <label>Category</label>
+      <select required>
+        <option value="">Select Category</option>
+        <option>Tournament</option>
+        <option>Trial</option>
+        <option>Club Membership</option>
+      </select>
+
+      <h3>Payment</h3>
+      <div class="upi-box">
+        <p><strong>Pay Registration Fee:</strong></p>
+        <p>Scan QR or Click Pay Button:</p>
+        <img src="YOUR_QR_IMAGE.png" alt="UPI QR" width="200" />
+        <br><br>
+        <a href="upi://pay?pa=mitheleshs11-1@okaxis&pn=Cricket+Registration&am=200&cu=INR">
+          <button type="button">Pay ₹200 via UPI</button>
+        </a>
       </div>
 
-      <!-- DIRECT UPI LINK AS BUTTON -->
-      <a
-  class="btn-pay"
-  href="upi://pay?pa=mitheleshs11-1@okaxis&pn=SPL4%20Cricket&am=1&cu=INR&tn=SPL4%20Registration"
->
-  ₹ 1 – Pay with UPI
-</a>
-
-      <div class="note">
-        After payment, please take a screenshot and send it on WhatsApp to 9370557663 with your name and mobile number.
-      </div>
-    </div>
+      <button type="submit">Submit Registration</button>
+    </form>
   </div>
+
 </body>
 </html>
